@@ -1,15 +1,15 @@
 // ============================================
-// MAINTENANCE MODE CONTROLLER
+// MAINTENANCE MODE CONTROLLER + REDIRECTS
 // Control each website individually
 // ============================================
 
 const CONFIG = {
   // 🚨 TOGGLE EACH SITE INDIVIDUALLY
   MAINTENANCE: {
-    'rocketcitydefensesolutions.com': true,  // LLC Marketing site
-    'kubefix.dev': true,                     // KubeFix
-    'pipelineforge.dev': true,               // PipelineForge
-    'getpguard.com': true,                   // PipelineGuard
+    'rocketcitydefensesolutions.com': false,  // LLC Marketing site
+    'kubefix.dev': false,                     // KubeFix
+    'pipelineforge.dev': false,               // PipelineForge
+    'getpguard.com': false,                   // PipelineGuard
   },
   
   // Domains managed by this worker (only these will be checked)
@@ -19,6 +19,15 @@ const CONFIG = {
     'pipelineforge.dev',
     'getpguard.com'
   ],
+  
+  // Domain redirects (processed BEFORE maintenance check)
+  REDIRECTS: {
+    'rocketcitydefensesolutions.org': 'https://rocketcitydefensesolutions.com',
+    'www.rocketcitydefensesolutions.org': 'https://rocketcitydefensesolutions.com',
+  },
+  
+  // WWW preference: 'remove' (non-www) or 'add' (www) or 'none' (no redirect)
+  WWW_PREFERENCE: 'remove',  // Forces non-www (example.com instead of www.example.com)
   
   // Your IP address (optional - can test while in maintenance)
   WHITELIST_IPS: [
@@ -34,15 +43,37 @@ export default {
 
 async function handleRequest(request) {
   const url = new URL(request.url);
-  const hostname = url.hostname.replace('www.', ''); // Handle www subdomain
+  const originalHostname = url.hostname;
   
-  // If this domain is not managed by this worker, pass through immediately
-  // This allows other Cloudflare rules (like .org redirects) to work
+  // ===== STEP 1: Handle domain redirects (.org → .com, etc.) =====
+  if (CONFIG.REDIRECTS[originalHostname]) {
+    const targetUrl = CONFIG.REDIRECTS[originalHostname] + url.pathname + url.search;
+    return Response.redirect(targetUrl, 301);
+  }
+  
+  // ===== STEP 2: Handle www redirects =====
+  const hasWWW = originalHostname.startsWith('www.');
+  const hostname = hasWWW ? originalHostname.substring(4) : originalHostname;
+  
+  // Only process www redirects for managed domains
+  if (CONFIG.MANAGED_DOMAINS.includes(hostname)) {
+    if (CONFIG.WWW_PREFERENCE === 'remove' && hasWWW) {
+      // Redirect www → non-www
+      const newUrl = url.protocol + '//' + hostname + url.pathname + url.search;
+      return Response.redirect(newUrl, 301);
+    } else if (CONFIG.WWW_PREFERENCE === 'add' && !hasWWW) {
+      // Redirect non-www → www
+      const newUrl = url.protocol + '//www.' + hostname + url.pathname + url.search;
+      return Response.redirect(newUrl, 301);
+    }
+  }
+  
+  // ===== STEP 3: Pass through non-managed domains =====
   if (!CONFIG.MANAGED_DOMAINS.includes(hostname)) {
     return fetch(request);
   }
   
-  // Check if maintenance is enabled for THIS specific domain
+  // ===== STEP 4: Check maintenance mode =====
   const maintenanceEnabled = CONFIG.MAINTENANCE[hostname];
   
   // If maintenance is OFF for this domain, just pass through
