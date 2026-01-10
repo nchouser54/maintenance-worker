@@ -22,8 +22,8 @@ const CONFIG = {
   
   // Domain redirects (processed BEFORE maintenance check)
   REDIRECTS: {
-    'rocketcitydefensesolutions.org': 'https://rocketcitydefensesolutions.com',
-    'www.rocketcitydefensesolutions.org': 'https://rocketcitydefensesolutions.com',
+    'rocketcitydefensesolutions.org': 'https://www.rocketcitydefensesolutions.com',
+    'www.rocketcitydefensesolutions.org': 'https://www.rocketcitydefensesolutions.com',
   },
   
   // WWW preference: 'remove' (non-www) or 'add' (www) or 'none' (no redirect)
