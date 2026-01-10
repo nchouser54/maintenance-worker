@@ -27,7 +27,7 @@ const CONFIG = {
   },
   
   // WWW preference: 'remove' (non-www) or 'add' (www) or 'none' (no redirect)
-  WWW_PREFERENCE: 'add',  // Forces www - server configured for www only
+  WWW_PREFERENCE: 'none',  // DISABLED - Let Cloudflare/Hostinger handle www redirects
   
   // Your IP address (optional - can test while in maintenance)
   WHITELIST_IPS: [
