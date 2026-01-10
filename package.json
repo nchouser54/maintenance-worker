@@ -1,0 +1,22 @@
+{
+  "name": "maintenance-controller",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for managing maintenance mode across multiple domains",
+  "main": "worker.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  },
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "maintenance",
+    "redirect"
+  ],
+  "author": "Rocket City Defense Solutions",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.78.0"
+  }
+}

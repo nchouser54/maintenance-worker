@@ -1,0 +1,17 @@
+name = "maintenance-controller"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Routes for each domain
+# Add these manually in Cloudflare Dashboard or via Wrangler CLI:
+# - *rocketcitydefensesolutions.com/*
+# - *kubefix.dev/*
+# - *pipelineforge.dev/*
+# - *getpguard.com/*
+
+[env.production]
+name = "maintenance-controller"
+
+[env.development]
+name = "maintenance-controller-dev"
