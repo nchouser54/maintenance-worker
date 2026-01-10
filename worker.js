@@ -12,6 +12,14 @@ const CONFIG = {
     'getpguard.com': false,                   // PipelineGuard
   },
   
+  // Domains managed by this worker (only these will be checked)
+  MANAGED_DOMAINS: [
+    'rocketcitydefensesolutions.com',
+    'kubefix.dev',
+    'pipelineforge.dev',
+    'getpguard.com'
+  ],
+  
   // Your IP address (optional - can test while in maintenance)
   WHITELIST_IPS: [
     // 'YOUR.IP.ADDRESS.HERE'  // Uncomment and add your IP to bypass maintenance
@@ -27,6 +35,12 @@ export default {
 async function handleRequest(request) {
   const url = new URL(request.url);
   const hostname = url.hostname.replace('www.', ''); // Handle www subdomain
+  
+  // If this domain is not managed by this worker, pass through immediately
+  // This allows other Cloudflare rules (like .org redirects) to work
+  if (!CONFIG.MANAGED_DOMAINS.includes(hostname)) {
+    return fetch(request);
+  }
   
   // Check if maintenance is enabled for THIS specific domain
   const maintenanceEnabled = CONFIG.MAINTENANCE[hostname];
