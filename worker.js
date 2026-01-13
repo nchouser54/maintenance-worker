@@ -90,12 +90,13 @@ async function handleRequest(request) {
   // Allow maintenance page itself and assets
   const allowedPaths = [
     '/maintenance',    // Next.js app route (exact match handled below)
+    '/logos/',         // Logo images
     '/css/',
     '/js/', 
     '/fonts/',
     '/favicon',
     '/_next/static/',  // Next.js assets
-    '/_next/image/',   // Next.js images
+    '/_next/image',    // Next.js image optimizer (no trailing slash - uses query params)
     '/public/',
     '/assets/',        // Vite assets
   ];
@@ -103,8 +104,9 @@ async function handleRequest(request) {
   // Check if path is allowed or is an asset file
   // For /maintenance, allow exact match or with trailing content
   if (url.pathname === '/maintenance' ||
+      url.pathname.startsWith('/_next/image') ||  // Next.js image optimizer with query params
       allowedPaths.some(path => url.pathname.startsWith(path + '/')) ||
-      allowedPaths.some(path => url.pathname.startsWith(path) && path !== '/maintenance') ||
+      allowedPaths.some(path => url.pathname.startsWith(path) && path !== '/maintenance' && path !== '/_next/image') ||
       url.pathname.match(/\.(png|jpg|jpeg|svg|ico|woff|woff2|css|js|json)$/)) {
     return fetch(request);
   }
