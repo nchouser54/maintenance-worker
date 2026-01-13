@@ -89,7 +89,7 @@ async function handleRequest(request) {
   
   // Allow maintenance page itself and assets
   const allowedPaths = [
-    '/maintenance/',
+    '/maintenance',    // Next.js app route (exact match handled below)
     '/css/',
     '/js/', 
     '/fonts/',
@@ -101,13 +101,17 @@ async function handleRequest(request) {
   ];
   
   // Check if path is allowed or is an asset file
-  if (allowedPaths.some(path => url.pathname.startsWith(path)) || 
+  // For /maintenance, allow exact match or with trailing content
+  if (url.pathname === '/maintenance' ||
+      allowedPaths.some(path => url.pathname.startsWith(path + '/')) ||
+      allowedPaths.some(path => url.pathname.startsWith(path) && path !== '/maintenance') ||
       url.pathname.match(/\.(png|jpg|jpeg|svg|ico|woff|woff2|css|js|json)$/)) {
     return fetch(request);
   }
   
   // Redirect everyone else to maintenance page
-  return Response.redirect(url.origin + '/maintenance/index.html', 302);
+  // Use /maintenance for Next.js sites (they have app routes, not static index.html)
+  return Response.redirect(url.origin + '/maintenance', 302);
 }
 
 // ============================================
