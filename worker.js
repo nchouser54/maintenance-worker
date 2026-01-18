@@ -6,10 +6,10 @@
 const CONFIG = {
   // 🚨 TOGGLE EACH SITE INDIVIDUALLY
   MAINTENANCE: {
-    'rocketcitydefensesolutions.com': false,  // LLC Marketing site
-    'kubefix.dev': false,                     // KubeFix
-    'pipelineforge.dev': false,               // PipelineForge
-    'getpguard.com': false,                   // PipelineGuard
+    'rocketcitydefensesolutions.com': false,  // LLC Marketing site (working fine)
+    'kubefix.dev': false,                     // KubeFix - DISABLED MAINTENANCE
+    'pipelineforge.dev': false,               // PipelineForge - DISABLED MAINTENANCE
+    'getpguard.com': false,                   // PipelineGuard - DISABLED MAINTENANCE
   },
   
   // Domains managed by this worker (only these will be checked)
